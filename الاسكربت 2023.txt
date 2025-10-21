@@ -1,0 +1,588 @@
+// ==UserScript==
+// @name         walid atef 
+// @namespace    Be Quiet and Take it EZ
+// @version      0.1
+// @description  Full tools for Family Farm
+// @author       walid & atef
+// @match        *://farm-us.centurygames.com/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=centurygames.com
+// @grant        unsafeWindow
+// @run-at       document-end
+// ==/UserScript==
+//================================================================================
+// ==UserScript==
+// @name         Full Shop
+// @namespace    Be Quiet and Take it EZ
+// @version      0.1
+// @description  Full Shop
+// @author       walid & atef
+// @match        *://farm-us.centurygames.com/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=centurygames.com
+// @grant        unsafeWindow
+// @run-at       document-end
+// ==/UserScript==
+(function () {
+  "use strict";
+
+  function print(type, ...args) {
+    console[type](
+      `%c Family Farm Script `,
+      `background: #5865f2; color: black; font-weight: bold; border-radius: 5px; `,
+      ...args
+    );
+  }
+
+  function whenDefined(object, prop, callback) {
+    if (object[prop]) callback();
+    else {
+      Object.defineProperty(object, prop, {
+        configurable: true,
+        enumerable: true,
+        get: function () {
+          return this["_" + prop];
+        },
+        set: async function (val) {
+          this["_" + prop] = val;
+          await callback();
+        },
+      });
+    }
+  }
+
+  print("log", `Init`);
+
+  whenDefined(unsafeWindow, "Config", async () => {
+    unsafeWindow.Log.debug = function () {
+      for (var t = [], e = 0; e < arguments.length; e++) t[e] = arguments[e];
+      var i = "[Debug] " + t.shift();
+      console.log.apply(console, [i].concat(t));
+    };
+
+    //unsafeWindow.EnvCfg.DEBUG = true;
+
+    whenDefined(unsafeWindow.Config, "data", async () => {
+      Object.values(unsafeWindow.Config.Store).forEach((x) => {
+        if (x.buyable == false) {
+          x.buyable = true;
+        }
+      });
+    });
+  });
+})();
+
+//================================================================================
+// ==UserScript==
+// @name         Plant&Harvest+40% saving
+// @namespace    Be Quiet and Take it EZ
+// @version      0.1
+// @description  Plant&Harvest+40% saving
+// @author       walid & atef
+// @match        *://farm-us.centurygames.com/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=centurygames.com
+// @grant        unsafeWindow
+// @run-at       document-end
+// ==/UserScript==
+(function () {
+  function print(type, ...args) {
+    console[type](``, ...args);
+  }
+
+  async function definePropertyWhenUndefinedAsync(object, property, callback) {
+    if (!object.hasOwnProperty(property)) {
+      let value;
+      Object.defineProperty(object, property, {
+        get() {
+          return value;
+        },
+        async set(newValue) {
+          value = newValue;
+          await callback();
+        },
+        configurable: true,
+        enumerable: true,
+      });
+    } else {
+      await callback();
+    }
+  }
+
+  definePropertyWhenUndefinedAsync(unsafeWindow, "Config", async () => {
+    await definePropertyWhenUndefinedAsync(
+      unsafeWindow.Config,
+      "data",
+      async () => {}
+    );
+  });
+
+  var getElement = unsafeWindow.document.getElementById("message_nav");
+  var attach = getElement.parentNode;
+
+  var plantBtn = unsafeWindow.document.createElement("BUTTON");
+  plantBtn.innerHTML = "ÒÑÚ ÇáãÒÑÚå";
+  plantBtn.onclick = plantObj;
+  attach.appendChild(plantBtn);
+
+  async function plantObj() {
+    var unique = 10000;
+    let id = prompt("id", "");
+    if (isNaN(id)) {
+      alert("ÇÏÎá ÑŞã ÕÍíÍ");
+      return;
+    }
+    id = parseInt(id);
+    let max = prompt("ÇáãÓÇÍÉ", "152");
+    if (isNaN(max)) {
+      alert("ÇÏÎá ÑŞã ÕÍíÍ");
+      return;
+    }
+    max = parseInt(max);
+    let startX = prompt("X", "0");
+    if (isNaN(startX)) {
+      alert("ÇÏÎá ÑŞã ÕÍíÍ");
+      return;
+    }
+    startX = parseInt(startX);
+    let startY = prompt("y", "0");
+    if (isNaN(startY)) {
+      alert("ÇÏÎá ÑŞã ÕÍíÍ");
+      return;
+    }
+    startY = parseInt(startY);
+    for (let x = startX; x <= max; x = x + 4) {
+      for (let y = startY; y <= max; y = y + 4) {
+        await unsafeWindow.GF.loginController.loginProxy.send(
+          "add_plant.save_data",
+          {
+            unique_id: ++unique,
+            plant_id: id,
+            soil_x: x,
+            soil_y: y,
+            greenhouse_id: 204979,
+            greenhouse_x: x - 1,
+            greenhouse_y: y - 1,
+            qty: 1,
+            //"automatic" : false,
+          }
+        );
+      }
+    }
+  }
+  //================================================================================
+  var harvestBtn = unsafeWindow.document.createElement("BUTTON");
+  harvestBtn.innerHTML = "ÍÕÏ ÇáãÒÑÚå";
+  harvestBtn.onclick = harvestObj;
+  attach.appendChild(harvestBtn);
+
+  async function harvestObj() {
+    var unique = 10000;
+    let id = prompt("id", "");
+    if (isNaN(id)) {
+      alert("ÇÏÎá ÑŞã ÕÍíÍ");
+      return;
+    }
+    id = parseInt(id);
+    let max = prompt("ÇáãÓÇÍÉ", "152");
+    if (isNaN(max)) {
+      alert("ÇÏÎá ÑŞã ÕÍíÍ");
+      return;
+    }
+    let startX = prompt("X", "0");
+    if (isNaN(startX)) {
+      alert("ÇÏÎá ÑŞã ÕÍíÍ");
+      return;
+    }
+    startX = parseInt(startX);
+    let startY = prompt("y", "0");
+    if (isNaN(startY)) {
+      alert("ÇÏÎá ÑŞã ÕÍíÍ");
+      return;
+    }
+    startY = parseInt(startY);
+
+    for (let x = startX; x <= max; x = x + 4) {
+      for (let y = startY; y <= max; y = y + 4) {
+        await unsafeWindow.GF.loginController.loginProxy.send(
+          "collect_product.save_data",
+          {
+            unique_id: ++unique,
+            id: id,
+            x: x,
+            y: y,
+            qty: 1,
+            greenhouse_id: 204979,
+            greenhouse_x: x - 1,
+            greenhouse_y: y - 1,
+            automatic: false,
+          }
+        );
+      }
+    }
+  }
+})();
+//================================================================================
+// ==UserScript==
+// @name         Automatic Farming
+// @namespace    Be Quiet and Take it EZ
+// @version      0.1
+// @description  Plant&Harvest+40% saving Auto
+// @author       walid & atef
+// @match        *://farm-us.centurygames.com/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=centurygames.com
+// @grant        unsafeWindow
+// @run-at       document-end
+// ==/UserScript==
+(function () {
+  function print(type, ...args) {
+    console[type](``, ...args);
+  }
+
+  async function definePropertyWhenUndefinedAsync(object, property, callback) {
+    if (!object.hasOwnProperty(property)) {
+      let value;
+      Object.defineProperty(object, property, {
+        get() {
+          return value;
+        },
+        async set(newValue) {
+          value = newValue;
+          await callback();
+        },
+        configurable: true,
+        enumerable: true,
+      });
+    } else {
+      await callback();
+    }
+  }
+
+  definePropertyWhenUndefinedAsync(unsafeWindow, "Config", async () => {
+    await definePropertyWhenUndefinedAsync(
+      unsafeWindow.Config,
+      "data",
+      async () => {}
+    );
+  });
+
+  print("log", `Init`);
+
+  var getElement = unsafeWindow.document.getElementById("message_nav");
+  var attach = getElement.parentNode;
+
+  var plantBtn = unsafeWindow.document.createElement("BUTTON");
+  plantBtn.innerHTML = "ÇÊæãÇÊíß";
+  plantBtn.onclick = plantObj;
+  attach.appendChild(plantBtn);
+
+  async function plantObj() {
+    var unique = 10000;
+    let id = prompt("ÏÎá id ÇáäÈÇÊ Çáí ÇäÊ ÚÇíÒå)", "");
+    if (isNaN(id)) {
+      alert("ÇÏÎá ÑŞã ÕÍíÍ");
+      return;
+    }
+    id = parseInt(id);
+    let t = prompt("ÏÎá Òãä ÇáÒÑÚÉ ÇáßÇãá ÈÇáÏŞÇíŞ)", "");
+    if (isNaN(t)) {
+      alert("ÇÏÎá ÑŞã ÕÍíÍ");
+      return;
+    }
+    t = parseInt(t);
+
+    let max = prompt("ÏÎá ÇáäåÇíÉ)", "152");
+    if (isNaN(max)) {
+      alert("ÇÏÎá ÑŞã ÕÍíÍ");
+      return;
+    }
+
+    max = parseInt(max);
+    let startX = prompt("XÏÎá ÇáÈÏÇíÉ", "0");
+    if (isNaN(startX)) {
+      alert("ÇÏÎá ÑŞã ÕÍíÍ");
+      return;
+    }
+    startX = parseInt(startX);
+    let startY = prompt("YÏÎá ÇáÈÏÇíÉ", "0");
+    if (isNaN(startY)) {
+      alert("ÇÏÎá ÑŞã ÕÍíÍ");
+      return;
+    }
+    startY = parseInt(startY);
+    let auto = true;
+    while (auto) {
+      for (let x = startX; x <= max; x = x + 4) {
+        for (let y = startY; y <= max; y = y + 4) {
+          await unsafeWindow.GF.loginController.loginProxy.send(
+            "add_plant.save_data",
+            {
+              unique_id: ++unique,
+              plant_id: id,
+              soil_x: x,
+              soil_y: y,
+              greenhouse_id: 204979,
+              greenhouse_x: x - 1,
+              greenhouse_y: y - 1,
+              qty: 1,
+            }
+          );
+        }
+      }
+
+      // Add cooldown here
+      await new Promise((resolve) =>
+        setTimeout(resolve, (t  * 1000 * 60 * 0.85) * 0.6 + 10000)
+      );
+
+      for (let x = startX; x <= max; x = x + 4) {
+        for (let y = startY; y <= max; y = y + 4) {
+          await unsafeWindow.GF.loginController.loginProxy.send(
+            "collect_product.save_data",
+            {
+              unique_id: ++unique,
+              id: id,
+              x: x,
+              y: y,
+              qty: 1,
+              greenhouse_id: 204979,
+              greenhouse_x: x - 1,
+              greenhouse_y: y - 1,
+              automatic: false,
+            }
+          );
+        }
+      }
+    }
+  }
+})();
+
+//================================================================================
+// ==UserScript==
+// @name         Tree
+// @namespace    Be Quiet and Take it EZ
+// @version      0.1
+// @description  Tree harvest
+// @author       walid & atef
+// @match        *://farm-us.centurygames.com/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=centurygames.com
+// @grant        unsafeWindow
+// @run-at       document-end
+// ==/UserScript==
+(function () {
+  function whenDefined(object, prop, callback) {
+    if (object[prop]) callback();
+    else {
+      Object.defineProperty(object, prop, {
+        configurable: true,
+        enumerable: true,
+        get: function () {
+          return this["_" + prop];
+        },
+        set: async function (val) {
+          this["_" + prop] = val;
+          await callback();
+        },
+      });
+    }
+  }
+
+  function customPrompt(message) {
+    return new Promise((resolve) => {
+      unsafeWindow.alert(message);
+      resolve();
+    });
+  }
+  console.log("Init");
+
+  var requestElm = unsafeWindow.document.getElementById("message_nav");
+  var parent = requestElm.parentNode;
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  var harvPrBtn = unsafeWindow.document.createElement("BUTTON");
+  harvPrBtn.innerHTML = "ÍÕÏ ÇáÇÔÌÇÑ";
+  harvPrBtn.onclick = harvPrObj;
+  parent.appendChild(harvPrBtn);
+
+  async function harvPrObj() {
+    var unique = 10000;
+    let id = prompt("ÏÎá id ÇáÔÌÑÉ Çáí ÇäÊ ÚÇíÒå)", "");
+    if (isNaN(id)) {
+      alert("ÇÏÎá ÑŞã ÕÍíÍ");
+      return;
+    }
+    id = parseInt(id);
+    let max = prompt("ÏÎá ÇáäåÇíÉ", "152");
+    if (isNaN(max)) {
+      alert("ÇÏÎá ÑŞã ÕÍíÍ");
+      return;
+    }
+    let startX = prompt("XÏÎá ÇáÈÏÇíÉ", "-58");
+    if (isNaN(startX)) {
+      alert("ÇÏÎá ÑŞã ÕÍíÍ");
+      return;
+    }
+    startX = parseInt(startX);
+    let startY = prompt("yÏÎá ÇáÈÏÇíÉ", "-58");
+    if (isNaN(startY)) {
+      alert("ÇÏÎá ÑŞã ÕÍíÍ");
+      return;
+    }
+    startY = parseInt(startY);
+
+    for (let x = startX; x <= max; x = x + 1) {
+      for (let y = startY; y <= max; y = y + 1) {
+        await unsafeWindow.GF.loginController.loginProxy.send(
+          "collect_product.save_data",
+          {
+            unique_id: ++unique,
+            id: id,
+            x: x,
+            y: y,
+            qty: 1,
+            automatic: false,
+          }
+        );
+      }
+    }
+  }
+})();
+
+
+//================================================================================
+// ==UserScript==
+// @name         Soil Extend
+// @namespace    Be Quiet and Take it EZ
+// @version      0.1
+// @description  Soil out and 8 soil in super soil
+// @author       walid & atef
+// @match        *://farm-us.centurygames.com/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=centurygames.com
+// @grant        unsafeWindow
+// @run-at       document-end
+// ==/UserScript==
+(function () {
+  function print(type, ...args) {
+    console[type](``, ...args);
+  }
+
+  async function definePropertyWhenUndefinedAsync(object, property, callback) {
+    if (!object.hasOwnProperty(property)) {
+      let value;
+      Object.defineProperty(object, property, {
+        get() {
+          return value;
+        },
+        async set(newValue) {
+          value = newValue;
+          await callback();
+        },
+        configurable: true,
+        enumerable: true,
+      });
+    } else {
+      await callback();
+    }
+  }
+
+  definePropertyWhenUndefinedAsync(unsafeWindow, "Config", async () => {
+    await definePropertyWhenUndefinedAsync(
+      unsafeWindow.Config,
+      "data",
+      async () => {}
+    );
+  });
+
+  print("log", `Init`);
+
+  var getElement = unsafeWindow.document.getElementById("message_nav");
+  var attach = getElement.parentNode;
+
+  var soilBtn = unsafeWindow.document.createElement("BUTTON");
+  soilBtn.innerHTML = "ÑÕ ÇáÊÑÈå ÎÑÇÌ ÍÏÏ ÇáãÒÑÚå";
+  soilBtn.onclick = soilObj;
+  attach.appendChild(soilBtn);
+
+  async function soilObj() {
+    alert("wait 2 minutes before refresh");
+
+    for (let x = 0; x <= 152; x = x + 4) {
+      for (let y = 0; y <= 152; y = y + 4) {
+        const nestedDataPackage = {
+          soils: {
+            0: {
+              id: 1,
+              x: x,
+              y: y,
+              daily_limit: false,
+            },
+          },
+        };
+
+        await unsafeWindow.GF.loginController.loginProxy.send(
+          "plow_soils.save_data",
+          nestedDataPackage
+        );
+      }
+    }
+  }
+})();
+
+//================================================================================
+// ==UserScript==
+// @name         S_R
+// @namespace    Be Quiet and Take it EZ
+// @version      0.1
+// @description  Signed_request
+// @author       walid & atef
+// @match        *://farm-us.centurygames.com/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=centurygames.com
+// @grant        unsafeWindow
+// @run-at       document-end
+// ==/UserScript==
+(function () {
+  "use strict";
+
+  function print(type, ...args) {
+    console[type](
+      `%c Family Farm Script `,
+      `background: #5865f2; color: black; font-weight: bold; border-radius: 5px; `,
+      ...args
+    );
+  }
+
+  function whenDefined(object, prop, callback) {
+    if (object[prop]) callback();
+    else {
+      Object.defineProperty(object, prop, {
+        configurable: true,
+        enumerable: true,
+        get: function () {
+          return this["_" + prop];
+        },
+        set: async function (val) {
+          this["_" + prop] = val;
+          await callback();
+        },
+      });
+    }
+  }
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  print("log", `Init`);
+
+  var requestElm = unsafeWindow.document.getElementById("message_nav");
+  var parent = requestElm.parentNode;
+
+  var SRbtn = unsafeWindow.document.createElement("BUTTON");
+  SRbtn.innerHTML = "ÇÓÊÎÑÇÌ ÇáÑíßæÓÊ";
+  SRbtn.onclick = () => {
+    window.prompt("Your current SR is: ", unsafeWindow.sr);
+  };
+  parent.appendChild(SRbtn);
+})();
+
+//================================================================================
